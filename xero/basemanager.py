@@ -200,6 +200,9 @@ class BaseManager(object):
                 return response.content
 
             elif response.status_code == 400:
+                print('This is the body that was sent to Xero')
+                print(response.request.body)
+
                 raise XeroBadRequest(response)
 
             elif response.status_code == 401:
