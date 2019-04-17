@@ -20,12 +20,25 @@ class XeroBadRequest(XeroException):
     def __init__(self, response):
         print('Headers')
         print(response.headers)
+        print('Response')
+        print(response)
         if response.headers['content-type'].startswith('application/json'):
             data = json.loads(response.text)
             msg = "%s: %s" % (data['Type'], data['Message'])
             self.errors = [err['Message']
                 for elem in data.get('Elements', [])
                 for err in elem.get('ValidationErrors', [])
+            ]
+
+            print('OG Errors')
+            print(self.errors)
+            print('Data')
+            print(data)
+
+            self.errors = [
+                'One or more line items must be specified',
+                'Invoice not of valid status for creation',
+                'A Contact must be specified for this type of transaction',
             ]
             if len(self.errors) > 0:
                 self.problem = self.errors[0]
@@ -36,7 +49,7 @@ class XeroBadRequest(XeroException):
                     msg += ' (%s)' % self.problem
             else:
                 self.problem = None
-            super(XeroBadRequest, self).__init__(response, msg=msg)
+            super(XeroBadRequest, self).__init__(response, msg=json.dumps({"Message": msg, "Errors": self.errors}))
 
         elif response.headers['content-type'].startswith('text/html'):
             payload = parse_qs(response.text)
