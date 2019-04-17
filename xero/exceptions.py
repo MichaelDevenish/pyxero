@@ -18,6 +18,8 @@ class XeroNotVerified(Exception):
 class XeroBadRequest(XeroException):
     # HTTP 400: Bad Request
     def __init__(self, response):
+        print('Headers')
+        print(response.headers)
         if response.headers['content-type'].startswith('application/json'):
             data = json.loads(response.text)
             msg = "%s: %s" % (data['Type'], data['Message'])
