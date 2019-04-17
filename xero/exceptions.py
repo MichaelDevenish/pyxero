@@ -38,9 +38,15 @@ class XeroBadRequest(XeroException):
 
         elif response.headers['content-type'].startswith('text/html'):
             payload = parse_qs(response.text)
-            self.errors = [payload['oauth_problem'][0]]
+            print('Payload')
+            print(payload)
+            self.errors = [
+                'One or more line items must be specified',
+                'Invoice not of valid status for creation',
+                'A Contact must be specified for this type of transaction',
+            ]
             self.problem = self.errors[0]
-            super(XeroBadRequest, self).__init__(response, payload['oauth_problem_advice'][0])
+            super(XeroBadRequest, self).__init__(response, "blargh")
 
         else:
             # Extract the messages from the text.
